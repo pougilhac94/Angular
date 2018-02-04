@@ -32,6 +32,8 @@ import { HttpModule } from '@angular/http';
 import { baseURL } from './shared/baseurl';
 import { ProcessHTTPMsgService } from './services/process-httpmsg.service';
 
+import { RestangularModule, Restangular } from 'ngx-restangular';
+import { RestangularConfigFactory } from './shared/restConfig';
 
 @NgModule({
   declarations: [
@@ -53,16 +55,17 @@ import { ProcessHTTPMsgService } from './services/process-httpmsg.service';
     MatSlideToggleModule, MatToolbarModule, MatListModule, MatGridListModule,
     MatCardModule, MatIconModule, MatProgressSpinnerModule, MatDialogModule, FlexLayoutModule,
     AppRoutingModule, FormsModule, ReactiveFormsModule,
-    HttpModule
+    HttpModule,
+    RestangularModule.forRoot(RestangularConfigFactory)
   ],
   providers: [DishService,
-     PromotionService,
+      PromotionService,
       LeaderService,
       { provide: 'BaseURL', useValue: baseURL },
       ProcessHTTPMsgService ],
-  entryComponents: [
-    LoginComponent
-  ],
-  bootstrap: [AppComponent]
+    entryComponents: [
+      LoginComponent
+      ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
