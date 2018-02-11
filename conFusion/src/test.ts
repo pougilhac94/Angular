@@ -25,7 +25,10 @@ getTestBed().initTestEnvironment(
   platformBrowserDynamicTesting()
 );
 // Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
+// Par défaut test sur toute l'application
+//const context = require.context('./', true, /\.spec\.ts$/);
+// pour se limiter à une partie précise (menu component dans le cas présent)
+const context = require.context('./', true, /menu\.component\.spec\.ts$/);
 // And load the modules.
 context.keys().map(context);
 // Finally, start Karma to run the tests.

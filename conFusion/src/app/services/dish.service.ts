@@ -36,8 +36,8 @@ export class DishService {
     //return Observable.of(DISHES.map(dish => dish.id ));
     return this.getDishes()
                 .map(dishes => { return dishes.map(dish => dish.id) })
-                // l'introduction du catch, en fait inutile, gêne l'éditeur mais sans incidence
-                .catch(error => { return error; } )
+                // l'erreur dans l'instruction, le return doit être Observable () et non directement error
+                .catch(error => { return Observable.of(error); } )
                 ;
   }
   
