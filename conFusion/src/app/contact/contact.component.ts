@@ -1,22 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+
+import { FeedbackService } from '../services/feedback.service';
+import 'rxjs/add/operator/switchMap';
+
+import { Params, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from '../animations/app.animation';
+import { temporaire, expand2 } from '../animations/app.animation';
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
   host: {
-    '[@flyInOut]': 'true',
     'style': 'display: block;'
     },
-  animations: [flyInOut()]
+  animations: [temporaire(), expand2()]
 })
 export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup;
   feedback: Feedback;
+  submission :Feedback;
+  feedbackIds: number[];
+  feedbackLast: number;
   contactType = ContactType;
   formErrors = {
     'firstname': '',
@@ -24,6 +32,10 @@ export class ContactComponent implements OnInit {
     'telnum': '',
     'email': ''
   };
+
+  temporaire = 'shown';
+
+  affForm = false;
 
   validationMessages = {
     'firstname': {
@@ -46,9 +58,11 @@ export class ContactComponent implements OnInit {
     }
   };
 
-  constructor(private fb: FormBuilder) { // <--- inject FormBuilder
-    this.createForm();
-  }
+  constructor(private fbService: FeedbackService,
+    @Inject('BaseURL') private BaseURL,
+    private route: ActivatedRoute,
+    private location: Location,
+    private fb: FormBuilder) { this.createForm(); }
 
   ngOnInit() {
   }
@@ -63,10 +77,13 @@ export class ContactComponent implements OnInit {
       contacttype: 'None',
       message: ''
     });
+    this.temporaire = 'hidden';
+    
     this.feedbackForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();// (re)set validation messages now
+    
   }
 
   onValueChanged(data?: any) {
@@ -87,7 +104,14 @@ export class ContactComponent implements OnInit {
 
   onSubmit() {
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
+    this.fbService.submitFeedback(this.feedback)
+      .subscribe(feedback => this.feedback = feedback );
+    this.fbService.getSubmissionIds()
+      .subscribe(feedbackIds => { this.feedbackIds = feedbackIds ; 
+                                  this.fbService.getSubmission(this.feedbackIds.length)
+                                    .subscribe(submission => this.submission = submission ); 
+                                }); 
+    this.temporaire = 'hidden';
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',

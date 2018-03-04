@@ -14,6 +14,20 @@ export function visibility() {
     ]);
 }
 
+export function temporaire() {
+    return trigger('temporaire', [
+        state('shown', style({
+            transform: 'scale(1.0)',
+            opacity: 1
+        })),
+        state('hidden', style({
+            transform: 'scale(1.0)',
+            opacity: 0
+        })),
+        transition('* => *', animate('0.5s 5s ease-in-out'))
+    ]);
+}
+
 export function flyInOut() {
     return trigger('flyInOut',[
         state('*', style({ opacity: 1, transform: 'translateX(0)'})),
@@ -33,6 +47,16 @@ export function expand() {
         transition(':enter', [
             style({ transform: 'translateY(-50%)', opacity:0 }),
             animate('200ms ease-in', style({ opacity: 1, transform: 'translateX(0)' }))
+        ])
+    ]);
+}
+
+export function expand2() {
+    return trigger('expand2', [
+        state('*', style({ opacity: 1 })),
+        transition(':enter', [
+            style({ opacity:0 }),
+            animate('0.1s 6s ease-in', style({ opacity: 1}))
         ])
     ]);
 }

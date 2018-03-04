@@ -1,45 +1,38 @@
 import { Injectable } from '@angular/core';
-import {Dish} from '../shared/dish';
-//import {DISHES} from '../shared/dishes';
+import { Feedback } from '../shared/feedback';
 import { Http, Response } from '@angular/http';
 import { baseURL } from '../shared/baseurl';
 import { ProcessHTTPMsgService } from './process-httpmsg.service';
 
 import { Observable } from 'rxjs/Observable';
-
+/*
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
-
+*/
 import { RestangularModule, Restangular } from 'ngx-restangular';
 
 @Injectable()
-export class DishService {
+export class FeedbackService {
 
   constructor(private restangular: Restangular,
     private processHTTPMsg: ProcessHTTPMsgService) { }
 
-  getDishes(): Observable<Dish[]> {
-    return this.restangular.all('dishes').getList();
+  submitFeedback(feedback: Feedback): Observable<Feedback> {
+    return this.restangular.all('feedback').post(feedback);     
+    }
+
+  getSubmission(id: number): Observable<Feedback> {
+    return  this.restangular.one('feedback',id).get();
   }
 
-  getDish(id: number): Observable<Dish> {
-    return  this.restangular.one('dishes',id).get();
-  }
-
-  getFeaturedDish(): Observable<Dish> {
-    return this.restangular.all('dishes').getList({featured: true})
-      .map(dishes => dishes[0]);
-  }
-
-  getDishIds(): Observable<number[]> {
-    //return Observable.of(DISHES.map(dish => dish.id ));
-    return this.getDishes()
-                .map(dishes => { return dishes.map(dish => dish.id) })
+  getSubmissionIds(): Observable<number[]> {
+    return this.restangular.all('feedback').getList()
+                .map(feedbacks => { return feedbacks.map(feedback => feedback.id) })
                 // l'erreur dans l'instruction, le return doit être Observable () et non directement error
                 .catch(error => { return Observable.of(error); } )
                 ;
   }
-  
+
 }
